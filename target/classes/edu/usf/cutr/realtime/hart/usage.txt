@@ -1,0 +1,12 @@
+Description:
+  Application to convert Hillsborough Area Regional Transit data to GTFS realtime 
+  
+Usage:
+  java -jar demo.jar args
+
+Args:
+  --tripUpdatesPath=path           write GTFS-realtime trip updates to the specified path
+  --tripUpdatesUrl=url             share GTFS-realtime trip updates at the specified URL (e.g. "http://localhost:8080/trip-updates")
+  --vehiclePositionsPath=path      write GTFS-realtime vehicle positions to the specified path
+  --vehiclePositionsUrl=url        share GTFS-realtime vehicle positions at the specified URL (e.g. "http://localhost:8080/vehicle-positions")
+  

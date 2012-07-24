@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.usf.cutr.realtime.hart</groupId>
+  <artifactId>cutr-gtfs-realtime-hart</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>cutr-gtfs-realtime-hart</name>
+  <url>https://github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator/wiki/</url>
+  
+  <scm>
+    <connection>scm:git:http://github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator.git</developerConnection>
+    <url>http://github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator</url>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator/issues</url>
+  </issueManagement>
+  
+  <repositories>
+    <repository>
+      <id>public.onebusaway.org</id>
+      <url>http://nexus.onebusaway.org/content/groups/public/</url>
+    </repository>
+  </repositories>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.onebusaway</groupId>
+      <artifactId>onebusaway-gtfs-realtime-exporter</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onebusaway</groupId>
+      <artifactId>onebusaway-guice-jsr250</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onebusaway</groupId>
+      <artifactId>onebusaway-cli</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.6</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedClassifierName>withAllDependencies</shadedClassifierName>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>edu.usf.cutr.realtime.hart.HartToGtfsRealtimeMain</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
