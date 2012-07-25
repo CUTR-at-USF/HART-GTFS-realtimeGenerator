@@ -26,6 +26,13 @@
   
   <dependencies>
     <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>sqljdbc4</artifactId>
+      <version>4</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/libs/sqljdbc4.jar</systemPath>
+    </dependency>
+    <dependency>
       <groupId>org.onebusaway</groupId>
       <artifactId>onebusaway-gtfs-realtime-exporter</artifactId>
       <version>1.0.1</version>

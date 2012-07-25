@@ -272,24 +272,20 @@ public class HartToGtfsRealtimeService implements GtfsRealtimeProvider{
 
 	@Override
 	public FeedMessage getAlerts() {
-		// TODO Auto-generated method stub
 		return _alertsMessage;
 	}
 
 	@Override
 	public FeedMessage getTripUpdates() {
-		// TODO Auto-generated method stub
 		return _tripUpdatesMessage;
 	}
 
 	@Override
 	public FeedMessage getVehiclePositions() {
-		// TODO Auto-generated method stub
 		return _vehiclePositionsMessage;
 	}
 
 	private class RefreshTransitData implements Runnable {
-
 		@Override
 		public void run() {
 			try {
