@@ -213,7 +213,7 @@ public class RetrieveTransitData {
 		ResultSet rs = null;
         try {
             Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            _log.info(query);
+            _log.info("Executing SELECT query...");
             rs = stmt.executeQuery(query);
         } catch (SQLException e) {
         	e.printStackTrace();

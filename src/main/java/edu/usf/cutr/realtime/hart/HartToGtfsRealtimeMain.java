@@ -55,6 +55,8 @@ public class HartToGtfsRealtimeMain {
 	private static final String ARG_VEHICLE_POSITIONS_PATH = "vehiclePositionsPath";
 
 	private static final String ARG_VEHICLE_POSITIONS_URL = "vehiclePositionsUrl";
+	
+	private static final String ARG_REFRESH_INTERVAL = "refreshInterval";
 
 	public static void main(String[] args) throws Exception {
 		HartToGtfsRealtimeMain m = new HartToGtfsRealtimeMain();
@@ -114,6 +116,10 @@ public class HartToGtfsRealtimeMain {
 			VehiclePositionsFileWriter writer = injector.getInstance(VehiclePositionsFileWriter.class);
 			writer.setPath(path);
 		}
+		
+		if (cli.hasOption(ARG_REFRESH_INTERVAL)) {
+		  _provider.setRefreshInterval(Integer.parseInt(cli.getOptionValue(ARG_REFRESH_INTERVAL)));
+    }
 
 		_lifecycleService.start();
 	}
@@ -128,6 +134,7 @@ public class HartToGtfsRealtimeMain {
 		options.addOption(ARG_VEHICLE_POSITIONS_PATH, true,
 				"vehicle positions path");
 		options.addOption(ARG_VEHICLE_POSITIONS_URL, true, "vehicle positions url");
+		options.addOption(ARG_REFRESH_INTERVAL, true, "realtime data refresh interval");
 
 	}
 }

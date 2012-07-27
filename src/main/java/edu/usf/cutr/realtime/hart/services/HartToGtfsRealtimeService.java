@@ -30,9 +30,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeLibrary;
+import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeMutableProvider;
 import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,15 +64,17 @@ import edu.usf.cutr.realtime.hart.sql.connection.Properties;
  */
 
 @Singleton
-public class HartToGtfsRealtimeService implements GtfsRealtimeProvider{
+public class HartToGtfsRealtimeService{
 	private static final Logger _log = LoggerFactory.getLogger(HartToGtfsRealtimeService.class);
 
 	private volatile FeedMessage _tripUpdatesMessage = GtfsRealtimeLibrary.createFeedMessageBuilder().build();
 
 	private volatile FeedMessage _vehiclePositionsMessage = GtfsRealtimeLibrary.createFeedMessageBuilder().build();
 
-	private final FeedMessage _alertsMessage = GtfsRealtimeLibrary.createFeedMessageBuilder().build();
-
+//	private final FeedMessage _alertsMessage = GtfsRealtimeLibrary.createFeedMessageBuilder().build();
+	
+	private GtfsRealtimeMutableProvider _gtfsRealtimeProvider;
+	
 	private ScheduledExecutorService _executor;
 
 	private Connection _conn = null;
@@ -80,13 +84,22 @@ public class HartToGtfsRealtimeService implements GtfsRealtimeProvider{
 	/**
 	 * How often data will be updated, in seconds
 	 */
-	private int _refreshInterval = 20;
+	private int _refreshInterval = 30;
 
 	public HartToGtfsRealtimeService(){
 		Properties connProps = getConnectionProperties();
 		_conn = getConnection(connProps);;
 		_rtd = new RetrieveTransitData();
 	}
+	
+	public void setRefreshInterval(int refreshInterval) {
+    _refreshInterval = refreshInterval;
+  }
+	
+	@Inject
+	public void setGtfsRealtimeProvider(GtfsRealtimeMutableProvider gtfsRealtimeProvider) {
+    _gtfsRealtimeProvider = gtfsRealtimeProvider;
+  }
 
 	@PostConstruct
 	public void start() {
@@ -207,6 +220,7 @@ public class HartToGtfsRealtimeService implements GtfsRealtimeProvider{
 		}
 
 		_tripUpdatesMessage = tripUpdates.build();
+		_gtfsRealtimeProvider.setTripUpdates(_tripUpdatesMessage);
 	}
 
 	private void buildVehiclePositions(ArrayList<TransitData> transitData){
@@ -259,6 +273,7 @@ public class HartToGtfsRealtimeService implements GtfsRealtimeProvider{
 		}
 
 		_vehiclePositionsMessage = vehiclePositions.build();
+		_gtfsRealtimeProvider.setVehiclePositions(_vehiclePositionsMessage);
 	}
 
 	public void writeGtfsRealtimeOutput() {
@@ -268,21 +283,6 @@ public class HartToGtfsRealtimeService implements GtfsRealtimeProvider{
 		buildVehiclePositions(transitData);
 		_log.info("tripUpdates = "+_tripUpdatesMessage.getEntityCount());
 		_log.info("vehiclePositions = "+_vehiclePositionsMessage.getEntityCount());
-	}
-
-	@Override
-	public FeedMessage getAlerts() {
-		return _alertsMessage;
-	}
-
-	@Override
-	public FeedMessage getTripUpdates() {
-		return _tripUpdatesMessage;
-	}
-
-	@Override
-	public FeedMessage getVehiclePositions() {
-		return _vehiclePositionsMessage;
 	}
 
 	private class RefreshTransitData implements Runnable {

@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.onebusaway.guice.jsr250.JSR250Module;
 import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeExporterModule;
-import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeProvider;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -45,7 +44,6 @@ public class HartToGtfsRealtimeModule extends AbstractModule{
 	protected void configure() {
 		// TODO Auto-generated method stub
 		bind(HartToGtfsRealtimeService.class);
-		bind(GtfsRealtimeProvider.class).to(HartToGtfsRealtimeService.class);
 	}
 
 }
