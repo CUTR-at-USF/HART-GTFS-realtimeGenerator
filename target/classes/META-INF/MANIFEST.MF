@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: HanTam
-Build-Jdk: 1.6.0_31
+Built-By: KhoaTran
+Build-Jdk: 1.7.0_06
 Created-By: Maven Integration for Eclipse
 
