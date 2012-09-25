@@ -53,6 +53,17 @@
       <id>public.onebusaway.org</id>
       <url>http://nexus.onebusaway.org/content/groups/public/</url>
     </repository>
+    <repository>
+      <releases>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>libs</id>
+      <name>libs</name>
+      <url>file://${project.basedir}/libs</url>
+    </repository>
   </repositories>
 </project>
 

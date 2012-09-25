@@ -22,15 +22,26 @@
       <id>public.onebusaway.org</id>
       <url>http://nexus.onebusaway.org/content/groups/public/</url>
     </repository>
+    
+    <repository>
+      <id>libs</id>
+      <name>libs</name>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <url>file://${project.basedir}/libs</url>
+    </repository>
   </repositories>
   
   <dependencies>
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>sqljdbc4</artifactId>
-      <version>4</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/libs/sqljdbc4.jar</systemPath>
+      <version>4.0</version>
     </dependency>    
     <dependency>
       <groupId>org.onebusaway</groupId>
@@ -65,6 +76,16 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>                                       
+                  </excludes>
+                </filter>
+              </filters>
               <shadedClassifierName>withAllDependencies</shadedClassifierName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
