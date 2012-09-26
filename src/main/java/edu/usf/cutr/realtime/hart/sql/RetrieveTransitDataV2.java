@@ -47,7 +47,8 @@ public class RetrieveTransitDataV2 {
 				"[trip_id], " +
 				"[delay], " +
 				"[stop_id] " +
-				"FROM [OrbCAD_III].[dbo].[h_RealTimeData]";
+				"FROM [OrbCAD_III].[dbo].[h_RealTimeData] " +
+				"ORDER BY [vehicle_id] ASC";
 		}	
 	
 	@SuppressWarnings("finally")

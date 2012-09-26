@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -84,6 +85,10 @@ public class HartToGtfsRealtimeServiceV2{
 	private Connection _conn = null;
 
 	private RetrieveTransitDataV2 _rtd = null;
+	
+	private final String TRIP_UPDATE_PREFIX = "trip_update_";
+	
+	private final String VEHICLE_POSITION_PREFIX = "vehicle_position_";
 
 	/**
 	 * How often data will be updated, in seconds
@@ -164,6 +169,8 @@ public class HartToGtfsRealtimeServiceV2{
 
 	private void buildTripUpdates(ArrayList<TransitDataV2> transitData){
 		FeedMessage.Builder tripUpdates = GtfsRealtimeLibrary.createFeedMessageBuilder();
+		
+		ArrayList<StopTimeUpdate> stopTimeUpdateSet = new ArrayList<StopTimeUpdate>();
 
 		for(int i=0; i<transitData.size(); i++){
 			TransitDataV2 td = transitData.get(i);
@@ -178,6 +185,29 @@ public class HartToGtfsRealtimeServiceV2{
 			String stopId = td.getStopId();
 			String routeId = td.getRouteId();
 			String tripId = td.getTripId();
+			
+			/**
+       * StopTime Event
+       */
+      StopTimeEvent.Builder arrival = StopTimeEvent.newBuilder();
+      arrival.setDelay(delay);
+      
+			/**
+       * StopTime Update
+       */
+      StopTimeUpdate.Builder stopTimeUpdate = StopTimeUpdate.newBuilder();
+      if(stopId==null){
+        continue;
+      }
+      stopTimeUpdate.setStopId(stopId);
+//      stopTimeUpdate.setStopSequence(stopSequence);
+      stopTimeUpdate.setArrival(arrival);
+      
+      stopTimeUpdateSet.add(stopTimeUpdate.build());
+      
+      if(i!=transitData.size()-1 && tripId.equalsIgnoreCase(transitData.get(i+1).getTripId())){
+        continue;
+      }
 
 			/**
 			 * Trip Descriptor
@@ -191,31 +221,15 @@ public class HartToGtfsRealtimeServiceV2{
 			 */
 			VehicleDescriptor.Builder vehicleDescriptor = VehicleDescriptor.newBuilder();
 			vehicleDescriptor.setId(vehicleId);
-			
-			/**
-			 * StopTime Event
-			 */
-			StopTimeEvent.Builder arrival = StopTimeEvent.newBuilder();
-			arrival.setDelay(delay);
-
-			/**
-			 * StopTime Update
-			 */
-			StopTimeUpdate.Builder stopTimeUpdate = StopTimeUpdate.newBuilder();
-			if(stopId==null){
-				continue;
-			}
-			stopTimeUpdate.setStopId(stopId);
-//			stopTimeUpdate.setStopSequence(stopSequence);
-			stopTimeUpdate.setArrival(arrival);
 
 			TripUpdate.Builder tripUpdate = TripUpdate.newBuilder();
-			tripUpdate.addStopTimeUpdate(stopTimeUpdate);
+			tripUpdate.addAllStopTimeUpdate(stopTimeUpdateSet);
+			stopTimeUpdateSet.clear();
 			tripUpdate.setTrip(tripDescriptor);
 			tripUpdate.setVehicle(vehicleDescriptor);
 
 			FeedEntity.Builder tripUpdateEntity = FeedEntity.newBuilder();
-			tripUpdateEntity.setId(vehicleId);
+			tripUpdateEntity.setId(TRIP_UPDATE_PREFIX+tripId);
 			tripUpdateEntity.setTripUpdate(tripUpdate);
 
 			tripUpdates.addEntity(tripUpdateEntity);
@@ -228,6 +242,8 @@ public class HartToGtfsRealtimeServiceV2{
 	private void buildVehiclePositions(ArrayList<TransitDataV2> transitData){
 		FeedMessage.Builder vehiclePositions = GtfsRealtimeLibrary.createFeedMessageBuilder();
 
+		HashSet<String> vehicleIdSet = new HashSet<String>();
+		
 		for(int i=0; i<transitData.size(); i++){
 		  TransitDataV2 td = transitData.get(i);
       
@@ -241,6 +257,12 @@ public class HartToGtfsRealtimeServiceV2{
       String stopId = td.getStopId();
       String routeId = td.getRouteId();
       String tripId = td.getTripId();
+      
+      if(!vehicleIdSet.contains(vehicleId)){
+        vehicleIdSet.add(vehicleId);
+      } else {
+        continue;
+      }
 
 			/**
 			 * Trip Descriptor
@@ -271,7 +293,7 @@ public class HartToGtfsRealtimeServiceV2{
 			vehiclePosition.setVehicle(vehicleDescriptor);
 
 			FeedEntity.Builder vehiclePositionEntity = FeedEntity.newBuilder();
-			vehiclePositionEntity.setId(vehicleId);
+			vehiclePositionEntity.setId(VEHICLE_POSITION_PREFIX+vehicleId);
 			vehiclePositionEntity.setVehicle(vehiclePosition);
 
 			vehiclePositions.addEntity(vehiclePositionEntity);
