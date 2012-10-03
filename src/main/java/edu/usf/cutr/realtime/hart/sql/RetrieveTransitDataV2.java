@@ -31,37 +31,51 @@ import org.slf4j.LoggerFactory;
  */
 
 public class RetrieveTransitDataV2 {
-	private static final Logger _log = LoggerFactory.getLogger(RetrieveTransitDataV2.class);
-	
-	String query = "";
-	
-	public RetrieveTransitDataV2(){
-		query = "SELECT " +
-				"[vehicle_id], " +
-				"[latitude], " +
-				"[longitude], " +
-				"[time], " +
-				"[bearing], " +
-				"[speed], " +
-				"[route_id], " +
-				"[trip_id], " +
-				"[delay], " +
-				"[stop_id] " +
-				"FROM [OrbCAD_III].[dbo].[h_RealTimeData] " +
-				"ORDER BY [vehicle_id] ASC";
-		}	
-	
-	@SuppressWarnings("finally")
-	public ResultSet executeQuery(Connection conn){
-		ResultSet rs = null;
-        try {
-            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            _log.info("Executing SELECT query...");
-            rs = stmt.executeQuery(query);
-        } catch (SQLException e) {
-        	e.printStackTrace();
-        } finally {
-            return rs;
-        }
-	}
+  private static final Logger _log = LoggerFactory.getLogger(RetrieveTransitDataV2.class);
+
+  String query = "";
+
+  public RetrieveTransitDataV2(){
+    //		query = "SELECT " +
+    //				"[vehicle_id], " +
+    //				"[latitude], " +
+    //				"[longitude], " +
+    //				"[time], " +
+    //				"[bearing], " +
+    //				"[speed], " +
+    //				"[route_id], " +
+    //				"[trip_id], " +
+    //				"[delay], " +
+    //				"[stop_id] " +
+    //				"FROM [OrbCAD_III].[dbo].[h_RealTimeData] " +
+    //				"ORDER BY [vehicle_id] ASC";
+
+    query = "SELECT [vehicle_id]" +
+        "      ,[latitude]" +
+        "      ,[longitude]" +
+        "      ,[time]" +
+        "      ,[bearing]" +
+        "      ,[speed]" +
+        "      ,[route_id]" +
+        "      ,[trip_id]" +
+        "      ,[delay]" +
+        "      ,[stop_id]" +
+        "      ,[seq]" +
+        " FROM [OrbCAD_III].[dbo].[_RealTimeData2]" +
+        " ORDER BY trip_id, vehicle_id, seq ASC";
+  }	
+
+  @SuppressWarnings("finally")
+  public ResultSet executeQuery(Connection conn){
+    ResultSet rs = null;
+    try {
+      Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+      _log.info("Executing SELECT query...");
+      rs = stmt.executeQuery(query);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      return rs;
+    }
+  }
 }

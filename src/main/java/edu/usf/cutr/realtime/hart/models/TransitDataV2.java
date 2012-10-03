@@ -28,7 +28,7 @@ public class TransitDataV2 {
 	private String vehicleId, stopId, tripId, routeId;
 	private double vehicleLat, vehicleLon;
 	private Timestamp vehicleTime;
-	private int vehicleSpeed, delay, vehicleBearing;
+	private int vehicleSpeed, delay, vehicleBearing, sequenceNumber;
 
 	public TransitDataV2(){
 	}
@@ -54,6 +54,8 @@ public class TransitDataV2 {
             this.setDelay((Integer)data);
         } else if(colName.equals("stop_id")){
             this.setStopId(data.toString());
+        } else if(colName.equals("seq")){
+            this.setSequenceNumber((Integer)data);
         } else {
             System.out.println("Cannot map "+colName+" = "+data.toString()+" to any type!");
         }
@@ -201,5 +203,19 @@ public class TransitDataV2 {
    */
   public void setDelay(int delay) {
     this.delay = delay;
+  }
+
+  /**
+   * @return the sequenceNumber
+   */
+  public int getSequenceNumber() {
+    return sequenceNumber;
+  }
+
+  /**
+   * @param sequenceNumber the sequenceNumber to set
+   */
+  public void setSequenceNumber(int sequenceNumber) {
+    this.sequenceNumber = sequenceNumber;
   }
 }

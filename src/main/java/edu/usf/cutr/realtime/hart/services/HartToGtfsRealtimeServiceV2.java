@@ -181,6 +181,7 @@ public class HartToGtfsRealtimeServiceV2{
 			double lon = td.getVehicleLon();
 			int speed = td.getVehicleSpeed();
 			int bearing = td.getVehicleBearing();
+			int seq = td.getSequenceNumber();
 			Timestamp time = td.getVehicleTime();
 			String stopId = td.getStopId();
 			String routeId = td.getRouteId();
@@ -199,8 +200,8 @@ public class HartToGtfsRealtimeServiceV2{
       if(stopId==null){
         continue;
       }
+      stopTimeUpdate.setStopSequence(seq);
       stopTimeUpdate.setStopId(stopId);
-//      stopTimeUpdate.setStopSequence(stopSequence);
       stopTimeUpdate.setArrival(arrival);
       
       stopTimeUpdateSet.add(stopTimeUpdate.build());
@@ -253,6 +254,7 @@ public class HartToGtfsRealtimeServiceV2{
       double lon = td.getVehicleLon();
       int speed = td.getVehicleSpeed();
       int bearing = td.getVehicleBearing();
+      int seq = td.getSequenceNumber();
       Timestamp time = td.getVehicleTime();
       String stopId = td.getStopId();
       String routeId = td.getRouteId();
