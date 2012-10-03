@@ -37,7 +37,6 @@ import javax.inject.Singleton;
 
 import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeLibrary;
 import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeMutableProvider;
-import org.onebusway.gtfs_realtime.exporter.GtfsRealtimeProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,15 +49,12 @@ import com.google.transit.realtime.GtfsRealtime.VehicleDescriptor;
 import com.google.transit.realtime.GtfsRealtime.VehiclePosition;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeEvent;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
+import com.google.transit.realtime.GtfsRealtimeOneBusAway;
+import com.google.transit.realtime.GtfsRealtimeOneBusAway.OneBusAwayFeedEntity;
+import com.google.transit.realtime.GtfsRealtimeOneBusAway.OneBusAwayTripUpdate;
 
-import edu.usf.cutr.realtime.hart.models.CurrentPerformanceStatus;
-import edu.usf.cutr.realtime.hart.models.TransitDataV1;
 import edu.usf.cutr.realtime.hart.models.TransitDataV2;
-import edu.usf.cutr.realtime.hart.models.TripTimePoint;
-import edu.usf.cutr.realtime.hart.models.Vehicle;
-import edu.usf.cutr.realtime.hart.sql.ResultSetDecryptV1;
 import edu.usf.cutr.realtime.hart.sql.ResultSetDecryptV2;
-import edu.usf.cutr.realtime.hart.sql.RetrieveTransitDataV1;
 import edu.usf.cutr.realtime.hart.sql.RetrieveTransitDataV2;
 import edu.usf.cutr.realtime.hart.sql.connection.Properties;
 
@@ -200,9 +196,9 @@ public class HartToGtfsRealtimeServiceV2{
       if(stopId==null){
         continue;
       }
-      stopTimeUpdate.setStopSequence(seq);
-      stopTimeUpdate.setStopId(stopId);
-      stopTimeUpdate.setArrival(arrival);
+//      stopTimeUpdate.setStopSequence(seq);
+//      stopTimeUpdate.setStopId(stopId);
+//      stopTimeUpdate.setArrival(arrival);
       
       stopTimeUpdateSet.add(stopTimeUpdate.build());
       
@@ -224,10 +220,14 @@ public class HartToGtfsRealtimeServiceV2{
 			vehicleDescriptor.setId(vehicleId);
 
 			TripUpdate.Builder tripUpdate = TripUpdate.newBuilder();
-			tripUpdate.addAllStopTimeUpdate(stopTimeUpdateSet);
-			stopTimeUpdateSet.clear();
+//			tripUpdate.addAllStopTimeUpdate(stopTimeUpdateSet);
+//			stopTimeUpdateSet.clear();
 			tripUpdate.setTrip(tripDescriptor);
 			tripUpdate.setVehicle(vehicleDescriptor);
+			
+			OneBusAwayTripUpdate.Builder obaTripUpdate = OneBusAwayTripUpdate.newBuilder();
+      obaTripUpdate.setDelay(delay);
+      tripUpdate.setExtension(GtfsRealtimeOneBusAway.obaTripUpdate, obaTripUpdate.build());
 
 			FeedEntity.Builder tripUpdateEntity = FeedEntity.newBuilder();
 			tripUpdateEntity.setId(TRIP_UPDATE_PREFIX+tripId);
