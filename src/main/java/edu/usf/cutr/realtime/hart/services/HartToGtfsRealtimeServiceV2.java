@@ -45,15 +45,15 @@ import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.Position;
 import com.google.transit.realtime.GtfsRealtime.TripDescriptor;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
-import com.google.transit.realtime.GtfsRealtime.VehicleDescriptor;
-import com.google.transit.realtime.GtfsRealtime.VehiclePosition;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeEvent;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
+import com.google.transit.realtime.GtfsRealtime.VehicleDescriptor;
+import com.google.transit.realtime.GtfsRealtime.VehiclePosition;
 import com.google.transit.realtime.GtfsRealtimeOneBusAway;
-import com.google.transit.realtime.GtfsRealtimeOneBusAway.OneBusAwayFeedEntity;
 import com.google.transit.realtime.GtfsRealtimeOneBusAway.OneBusAwayTripUpdate;
 
 import edu.usf.cutr.realtime.hart.models.TransitDataV2;
+import edu.usf.cutr.realtime.hart.rt.fake.StopTimesCsvDecrypt;
 import edu.usf.cutr.realtime.hart.sql.ResultSetDecryptV2;
 import edu.usf.cutr.realtime.hart.sql.RetrieveTransitDataV2;
 import edu.usf.cutr.realtime.hart.sql.connection.Properties;
@@ -162,6 +162,13 @@ public class HartToGtfsRealtimeServiceV2{
 		_log.info(transitData.toString());
 		return transitData;
 	}
+	
+	private ArrayList<TransitDataV2> getOrbcadTransitDataFake(){
+	  StopTimesCsvDecrypt stcd = new StopTimesCsvDecrypt();
+    ArrayList<TransitDataV2> transitData = stcd.decrypt();
+    _log.info(transitData.toString());
+    return transitData;
+  }
 
 	private void buildTripUpdates(ArrayList<TransitDataV2> transitData){
 		FeedMessage.Builder tripUpdates = GtfsRealtimeLibrary.createFeedMessageBuilder();
@@ -193,12 +200,12 @@ public class HartToGtfsRealtimeServiceV2{
        * StopTime Update
        */
       StopTimeUpdate.Builder stopTimeUpdate = StopTimeUpdate.newBuilder();
-      if(stopId==null){
-        continue;
-      }
-//      stopTimeUpdate.setStopSequence(seq);
-//      stopTimeUpdate.setStopId(stopId);
-//      stopTimeUpdate.setArrival(arrival);
+//      if(stopId==null){
+//        continue;
+//      }
+      stopTimeUpdate.setStopSequence(seq);
+      stopTimeUpdate.setStopId(stopId);
+      stopTimeUpdate.setArrival(arrival);
       
       stopTimeUpdateSet.add(stopTimeUpdate.build());
       
@@ -211,23 +218,29 @@ public class HartToGtfsRealtimeServiceV2{
 			 */
 			TripDescriptor.Builder tripDescriptor = TripDescriptor.newBuilder();
 			tripDescriptor.setTripId(tripId);
-			tripDescriptor.setRouteId(routeId);
+			if(routeId!=null && !routeId.isEmpty()) {
+			  tripDescriptor.setRouteId(routeId);
+			}
 
 			/**
 			 * Vehicle Descriptor
 			 */
 			VehicleDescriptor.Builder vehicleDescriptor = VehicleDescriptor.newBuilder();
-			vehicleDescriptor.setId(vehicleId);
-
-			TripUpdate.Builder tripUpdate = TripUpdate.newBuilder();
-//			tripUpdate.addAllStopTimeUpdate(stopTimeUpdateSet);
-//			stopTimeUpdateSet.clear();
-			tripUpdate.setTrip(tripDescriptor);
-			tripUpdate.setVehicle(vehicleDescriptor);
+			if(vehicleId!=null && !vehicleId.isEmpty()) {
+			  vehicleDescriptor.setId(vehicleId);
+			}
 			
-			OneBusAwayTripUpdate.Builder obaTripUpdate = OneBusAwayTripUpdate.newBuilder();
-      obaTripUpdate.setDelay(delay);
-      tripUpdate.setExtension(GtfsRealtimeOneBusAway.obaTripUpdate, obaTripUpdate.build());
+			TripUpdate.Builder tripUpdate = TripUpdate.newBuilder();
+			tripUpdate.addAllStopTimeUpdate(stopTimeUpdateSet);
+			stopTimeUpdateSet.clear();
+			tripUpdate.setTrip(tripDescriptor);
+			if(vehicleId!=null && !vehicleId.isEmpty()) {
+			  tripUpdate.setVehicle(vehicleDescriptor);
+			}
+			
+//			OneBusAwayTripUpdate.Builder obaTripUpdate = OneBusAwayTripUpdate.newBuilder();
+//      obaTripUpdate.setDelay(delay);
+//      tripUpdate.setExtension(GtfsRealtimeOneBusAway.obaTripUpdate, obaTripUpdate.build());
 
 			FeedEntity.Builder tripUpdateEntity = FeedEntity.newBuilder();
 			tripUpdateEntity.setId(TRIP_UPDATE_PREFIX+tripId);
@@ -307,11 +320,12 @@ public class HartToGtfsRealtimeServiceV2{
 
 	public void writeGtfsRealtimeOutput() {
 		_log.info("Writing Hart GTFS realtime...");
-		ArrayList<TransitDataV2> transitData = getOrbcadTransitData();
+//		ArrayList<TransitDataV2> transitData = getOrbcadTransitData();
+		ArrayList<TransitDataV2> transitData = getOrbcadTransitDataFake();
 		buildTripUpdates(transitData);
-		buildVehiclePositions(transitData);
+//		buildVehiclePositions(transitData);
 		_log.info("tripUpdates = "+_tripUpdatesMessage.getEntityCount());
-		_log.info("vehiclePositions = "+_vehiclePositionsMessage.getEntityCount());
+//		_log.info("vehiclePositions = "+_vehiclePositionsMessage.getEntityCount());
 	}
 
 	private class RefreshTransitData implements Runnable {

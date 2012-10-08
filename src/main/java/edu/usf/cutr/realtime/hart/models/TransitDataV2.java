@@ -62,7 +62,7 @@ public class TransitDataV2 {
     }
 	
 	public String toString(){
-		return vehicleId;
+		return tripId;
 	}
 
   /**

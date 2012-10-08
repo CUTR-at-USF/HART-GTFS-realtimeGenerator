@@ -99,6 +99,6 @@ public class TransitDataV1 {
     }
 	
 	public String toString(){
-		return ((Integer)vehicle.getId()).toString();
+		return ((Integer)cps.getTripId()).toString();
 	}
 }
