@@ -36,33 +36,20 @@ public class RetrieveTransitDataV2 {
   String query = "";
 
   public RetrieveTransitDataV2(){
-    //		query = "SELECT " +
-    //				"[vehicle_id], " +
-    //				"[latitude], " +
-    //				"[longitude], " +
-    //				"[time], " +
-    //				"[bearing], " +
-    //				"[speed], " +
-    //				"[route_id], " +
-    //				"[trip_id], " +
-    //				"[delay], " +
-    //				"[stop_id] " +
-    //				"FROM [OrbCAD_III].[dbo].[h_RealTimeData] " +
-    //				"ORDER BY [vehicle_id] ASC";
-
-    query = "SELECT [vehicle_id]" +
-        "      ,[latitude]" +
-        "      ,[longitude]" +
-        "      ,[time]" +
-        "      ,[bearing]" +
-        "      ,[speed]" +
-        "      ,[route_id]" +
-        "      ,[trip_id]" +
-        "      ,[delay]" +
-        "      ,[stop_id]" +
-        "      ,[seq]" +
-        " FROM [OrbCAD_III].[dbo].[_RealTimeData2]" +
-        " ORDER BY trip_id, vehicle_id, seq ASC";
+    
+    query = "SELECT [vehicle] as vehicle_id" +
+    		"      ,[latitude]" +
+    		"      ,[longitude]" +
+    		"      ,[time]" +
+    		"      ,[delay]" +
+    		"      ,[speed]" +
+    		"      ,[bearing]" +
+    		"      ,[route] as route_id" +
+    		"      ,[trip] as trip_id" +
+    		"      ,[stop] as stop_id" +
+    		"      ,[sequence] as seq" +
+    		" FROM [OrbCAD_III].[dbo].[h_BusEvents]" +
+    		" ORDER BY trip_id, vehicle_id, seq ASC";
   }	
 
   @SuppressWarnings("finally")
