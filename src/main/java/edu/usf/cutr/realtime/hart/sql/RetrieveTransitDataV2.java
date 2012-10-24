@@ -60,7 +60,7 @@ public class RetrieveTransitDataV2 {
       _log.info("Executing SELECT query...");
       rs = stmt.executeQuery(query);
     } catch (SQLException e) {
-      e.printStackTrace();
+      _log.error("Failed to execute SELECT query: " + e.getMessage());
     } finally {
       return rs;
     }

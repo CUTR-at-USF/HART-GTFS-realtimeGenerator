@@ -93,7 +93,7 @@ public class HartToGtfsRealtimeServiceV2{
 
 	public HartToGtfsRealtimeServiceV2(){
 		Properties connProps = getConnectionProperties();
-		_conn = getConnection(connProps);;
+		_conn = getConnection(connProps);
 		_rtd = new RetrieveTransitDataV2();
 	}
 	
@@ -126,10 +126,10 @@ public class HartToGtfsRealtimeServiceV2{
 			connProps.load(new FileInputStream("..\\config.properties"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			_log.error("Config file is not found: " + e.getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			_log.error("Failed to read connection properties: " + e.getMessage());
 		}
 		return connProps;
 	}
@@ -149,14 +149,18 @@ public class HartToGtfsRealtimeServiceV2{
 			conn = DriverManager.getConnection(connString);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			_log.error("Failed to connect to " + connProps.getDatabaseName() + " database: " + e.getMessage());
 		}
 		
 		return conn;
 	}
 
-	private ArrayList<TransitDataV2> getOrbcadTransitData(){
+	private ArrayList<TransitDataV2> getOrbcadTransitData() throws Exception{
 		ResultSet rs = _rtd.executeQuery(_conn);
+		if(rs == null){
+		  _conn = null;
+		  throw new Exception("ResultSet for SELECT query is null");
+		}
 		ResultSetDecryptV2 rsd = new ResultSetDecryptV2(rs);
 		ArrayList<TransitDataV2> transitData = rsd.decrypt();
 		_log.info(transitData.toString());
@@ -316,14 +320,22 @@ public class HartToGtfsRealtimeServiceV2{
 		_gtfsRealtimeProvider.setVehiclePositions(_vehiclePositionsMessage);
 	}
 
-	public void writeGtfsRealtimeOutput() {
+	public void writeGtfsRealtimeOutput() throws Exception {
 		_log.info("Writing Hart GTFS realtime...");
-		ArrayList<TransitDataV2> transitData = getOrbcadTransitData();
-//		ArrayList<TransitDataV2> transitData = getOrbcadTransitDataFake();
-		buildTripUpdates(transitData);
-		buildVehiclePositions(transitData);
-		_log.info("tripUpdates = "+_tripUpdatesMessage.getEntityCount());
-		_log.info("vehiclePositions = "+_vehiclePositionsMessage.getEntityCount());
+		if(_conn==null){
+      Properties connProps = getConnectionProperties();
+      _conn = getConnection(connProps);
+    }
+		if(_conn==null) {
+		  throw new Exception("Database Connection is null");
+		} else {
+		  ArrayList<TransitDataV2> transitData = getOrbcadTransitData();
+//		  ArrayList<TransitDataV2> transitData = getOrbcadTransitDataFake();
+	    buildTripUpdates(transitData);
+	    buildVehiclePositions(transitData);
+	    _log.info("tripUpdates = "+_tripUpdatesMessage.getEntityCount());
+	    _log.info("vehiclePositions = "+_vehiclePositionsMessage.getEntityCount());
+		}
 	}
 
 	private class RefreshTransitData implements Runnable {
@@ -333,7 +345,7 @@ public class HartToGtfsRealtimeServiceV2{
 				_log.info("refreshing vehicles");
 				writeGtfsRealtimeOutput();
 			} catch (Exception ex) {
-				_log.warn("Error in vehicle refresh task", ex);
+				_log.error("Failed to refresh TransitData: " + ex.getMessage());
 			}
 		}
 	}
