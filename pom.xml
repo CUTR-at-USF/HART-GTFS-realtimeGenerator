@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.usf.cutr.realtime.hart</groupId>
   <artifactId>cutr-gtfs-realtime-hart</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <name>cutr-gtfs-realtime-hart</name>
   <url>https://github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator/wiki/</url>
   
