@@ -211,6 +211,10 @@ public class HartToGtfsRealtimeServiceV2{
       stopTimeUpdate.setStopSequence(seq);
       stopTimeUpdate.setStopId(stopId);
       stopTimeUpdate.setArrival(arrival);
+      // Google requested adding departure delays for Google Transit (Issue #7).
+      // Since we don't have explicit departure delay info from OrbCAD,
+      // at the suggestion of Google we will just use arrival delay as a substitute
+      stopTimeUpdate.setDeparture(arrival);  
       
       stopTimeUpdateSet.add(stopTimeUpdate.build());
       
