@@ -38,8 +38,8 @@ public class RetrieveTransitDataV1 {
 	public RetrieveTransitDataV1(){
 		query = "(SELECT" +
 				"				v.vehicle_id," +
-				"				v.loc_x AS 'latitude'," +
-				"				v.loc_y AS 'longitude'," +
+				"				v.loc_y AS 'latitude'," +
+				"				v.loc_x AS 'longitude'," +
 				"				v.average_speed AS 'speed'," +
 				"				v.heading AS 'heading'," +
 				"				v.vehicle_position_date_time," +
@@ -109,8 +109,8 @@ public class RetrieveTransitDataV1 {
 				"		UNION" +
 				"		(SELECT" +
 				"				v.vehicle_id," +
-				"				v.loc_x AS 'latitude'," +
-				"				v.loc_y AS 'longitude'," +
+				"				v.loc_y AS 'latitude'," +
+				"				v.loc_x AS 'longitude'," +
 				"				v.average_speed AS 'speed'," +
 				"				v.heading AS 'heading'," +
 				"				v.vehicle_position_date_time," +
@@ -165,8 +165,8 @@ public class RetrieveTransitDataV1 {
 				"		UNION" +
 				"		(SELECT" +
 				"				v.vehicle_id," +
-				"				v.loc_x AS 'latitude'," +
-				"				v.loc_y AS 'longitude'," +
+				"				v.loc_y AS 'latitude'," +
+				"				v.loc_x AS 'longitude'," +
 				"				v.average_speed AS 'speed'," +
 				"				v.heading AS 'heading'," +
 				"				v.vehicle_position_date_time," +
