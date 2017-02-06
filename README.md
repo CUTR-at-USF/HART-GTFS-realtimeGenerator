@@ -1,4 +1,4 @@
-# HART-GTFS-realtimeGenerator
+# HART-GTFS-realtimeGenerator [![Build Status](https://travis-ci.org/CUTR-at-USF/HART-GTFS-realtimeGenerator.svg?branch=master)](https://travis-ci.org/CUTR-at-USF/HART-GTFS-realtimeGenerator)
 
 This project retrieves real-time transit data from [Hillsborough Area Regional Transit (HART)'s](http://www.gohart.org/) OrbCAD Automatic Vehicle Location (AVL) system and formats the data into the [General Transit Feed Specification (GTFS)-realtime format](https://developers.google.com/transit/gtfs-realtime/).  GTFS-realtime feeds can be consumed by applications such as [OneBusAway](http://onebusaway.org/) and [Google Transit](http://www.google.com/transit) to provide real-time transit data updates.
 
