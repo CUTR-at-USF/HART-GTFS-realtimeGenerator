@@ -73,6 +73,8 @@ vehicle,latitude,longitude,time,delay,speed,bearing,route,trip,stop,sequence
 
 Full example dataset is in a [CSV file here](https://drive.google.com/file/d/0B8oU647elPShLTdQTF9xV2tkYUE/edit?usp=sharing).  You could try to import this data into a SQL database table to test, or manually create the records yourself with the exact same field names.
 
+Fields have the same definitions as the corresponding fields in GTFS-realtime [TripUpdates](https://developers.google.com/transit/gtfs-realtime/reference/TripUpdate) and [VehiclePositions](https://developers.google.com/transit/gtfs-realtime/reference/VehiclePosition).
+
 ## Testing the application
 
 ### Trip Updates Feed
