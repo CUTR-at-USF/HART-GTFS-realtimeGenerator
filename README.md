@@ -61,6 +61,20 @@ SELECT [vehicle] as vehicle_id,[latitude],[longitude],[time],[delay],[speed],[be
 
 Therefore, if you provide a database table with the name `h_BusEvents` with the same column names in the `[]` and some test data, you should be able to pull back this test data and see it formatted in GTFS-realtime.  Note that your database should return only real-time data for this query - if a route/trip does not have real-time data, that record should not be returned by the query.
 
+The code expects the data types for each field to be the following values (using Microsoft SQL Server data types from the database we originally built this for) - if your data is different, you may need to modify [the code](https://github.com/CUTR-at-USF/HART-GTFS-realtimeGenerator/blob/master/src/main/java/edu/usf/cutr/realtime/hart/services/HartToGtfsRealtimeServiceV2.java#L185) to handle different types (e.g., if your speed values are decimals and you want to keep this precision):
+
+1. `vehicle` – varchar
+1. `latitude` – decimal
+1. `longitude` – decimal
+1. `time` – datetime
+1. `delay` – int
+1. `speed` – int
+1. `bearing` – int
+1. `route` – varchar
+1. `trip` – varchar
+1. `stop` – varchar
+1. `sequence` – int
+
 Here's an example dataset, based on actual real-time data for vehicles 1007, 2306, and 2308:
 
 ~~~
